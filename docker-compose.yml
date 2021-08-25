@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  cardinity-mysql-env:
+    restart: always
+    image: woahbase/alpine-mysql:latest
+    container_name: cardinity_mysql_db_container
+    environment:
+      MYSQL_USER: root
+      MYSQL_USER_PWD: root
+      MYSQL_USER_DB: cardinity_db
+    ports:
+      - 0.0.0.0:3306:3306
+    networks:
+      - cardinity-backend
+    volumes:
+      - ~/data/cardinity-db:/var/lib/mysql/backups
+
+  cardinity-service:
+    depends_on:
+      - cardinity-mysql-env
+    build:
+      context: .
+    image: cardinity-assessment:latest
+    container_name: cardinity-assessment-app
+    ports:
+      - 0.0.0.0:8080:8080
+    environment:
+      ACTIVE_PROFILE: default
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      DB_URL: jdbc:mysql://cardinity-mysql-env:3306/cardinity_db
+    volumes:
+      - ~/data/cardinity:/tmp
+    networks:
+      - cardinity-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2000M
+      restart_policy:
+        condition: on-failure
+
+networks:
+  cardinity-backend:
+    driver: bridge
