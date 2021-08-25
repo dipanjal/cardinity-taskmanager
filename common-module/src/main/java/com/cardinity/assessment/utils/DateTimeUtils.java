@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -137,5 +138,13 @@ public class DateTimeUtils {
         LocalDate startDate = formatDateStrToLocalDate(fromDate, DB_DATE_FORMAT);
         LocalDate endDate = formatDateStrToLocalDate(toDate, DB_DATE_FORMAT);
         return endDate.isBefore(startDate);
+    }
+
+    public static int convertToMilli(int unitValue, int calenderFlag) {
+        if(Calendar.HOUR == calenderFlag)
+            return 1000 * 60 * 60 * unitValue;
+        if(Calendar.MINUTE == calenderFlag)
+            return 1000 * 60 * unitValue;
+        return 0;
     }
 }

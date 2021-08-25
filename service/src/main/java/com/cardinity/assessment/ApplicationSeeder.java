@@ -71,7 +71,7 @@ public class ApplicationSeeder implements ApplicationListener<ContextRefreshedEv
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        populateRoles();
-        populateUsers();
+//        populateRoles();
+//        populateUsers();
     }
 }

@@ -81,6 +81,17 @@
             <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
 
+<!--        JWS Start-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+<!--        JWS End-->
+
     </dependencies>
 
     <build>

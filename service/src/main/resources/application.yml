@@ -27,4 +27,7 @@ spring:
 
 application:
   request-id-header: request-id
-  max-issue-book: 5
+  token-expiry-minute: 30
+  token-prefix: Bearer
+  jwt-secret: dipAnj@L
+  auth-header-name: Authorization

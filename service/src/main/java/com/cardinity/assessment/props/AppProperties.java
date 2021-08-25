@@ -15,5 +15,8 @@ import org.springframework.stereotype.Component;
 @Setter
 public class AppProperties {
     private String requestIdHeader;
-    private int maxIssueBook;
+    private int tokenExpiryMinute;
+    private String tokenPrefix;
+    private String jwtSecret;
+    private String authHeaderName;
 }

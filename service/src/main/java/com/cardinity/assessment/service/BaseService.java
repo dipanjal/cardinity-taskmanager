@@ -27,6 +27,10 @@ public abstract class BaseService {
         );
     }
 
+    protected String getMessage(String messageKey){
+        return messageHelper.getLocalMessage(messageKey);
+    }
+
     private  <E extends RuntimeException> Supplier<E> supplyException(E exception){
         return () -> exception;
     }

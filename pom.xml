@@ -33,6 +33,8 @@
 		<hibernate.validator.version>6.1.5.Final</hibernate.validator.version>
 		<commons-collection.version>4.4</commons-collection.version>
 		<open-api.version>1.5.9</open-api.version>
+		<jjwt.version>0.9.1</jjwt.version>
+		<jaxb-api.version>2.3.0</jaxb-api.version>
 
 		<tests.skip>true</tests.skip>
 	</properties>
@@ -83,6 +85,19 @@
 				<artifactId>springdoc-openapi-ui</artifactId>
 				<version>${open-api.version}</version>
 			</dependency>
+
+<!--			JWT-->
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${jjwt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${jaxb-api.version}</version>
+			</dependency>
+<!--			JWT-->
 		</dependencies>
 	</dependencyManagement>
 

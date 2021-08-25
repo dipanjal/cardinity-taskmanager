@@ -2,15 +2,20 @@ package com.cardinity.assessment.service.user;
 
 import com.cardinity.assessment.entity.RoleEntity;
 import com.cardinity.assessment.entity.UserEntity;
+import com.cardinity.assessment.model.auth.CurrentUser;
 import com.cardinity.assessment.model.request.user.CreateUserRequest;
 import com.cardinity.assessment.model.request.user.UpdateUserRequest;
 import com.cardinity.assessment.model.response.user.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +27,22 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
+
+    /** Spring Security Model Mapping */
+    public static User mapToUserDetails(UserEntity entity) {
+        return new CurrentUser (
+                entity.getId(),
+                entity.getUsername(),
+                entity.getPassword(),
+                getGrantedAuthorities(entity.getRoles())
+        );
+    }
+
+    private static List<GrantedAuthority> getGrantedAuthorities(Collection<RoleEntity> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+    }
 
     /** ENTITY MAPPING */
     public UserEntity mapToNewUserEntity(CreateUserRequest dto, Collection<RoleEntity> roleEntities){
