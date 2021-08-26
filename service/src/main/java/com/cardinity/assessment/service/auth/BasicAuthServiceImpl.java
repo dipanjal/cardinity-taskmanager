@@ -3,7 +3,6 @@ package com.cardinity.assessment.service.auth;
 import com.cardinity.assessment.exception.AuthException;
 import com.cardinity.assessment.model.request.auth.AuthenticationRequest;
 import com.cardinity.assessment.model.response.auth.TokenResponse;
-import com.cardinity.assessment.props.AppProperties;
 import com.cardinity.assessment.service.BaseService;
 import com.cardinity.assessment.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,14 +23,11 @@ public class BasicAuthServiceImpl extends BaseService implements AuthService {
 
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
-    private final AppProperties props;
 
     public BasicAuthServiceImpl(@Qualifier("cardinityUserDetailsService") UserDetailsService userDetailsService,
-                                AuthenticationManager authenticationManager,
-                                AppProperties props) {
+                                AuthenticationManager authenticationManager) {
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
-        this.props = props;
     }
 
     @Override
@@ -54,8 +50,7 @@ public class BasicAuthServiceImpl extends BaseService implements AuthService {
 
     @Override
     public UserDetails validateToken(String token) {
-        String jwtToken = JWTUtils.trimToken(token);
-        String userName = JWTUtils.extractUserName(jwtToken);
+        String userName = JWTUtils.extractUserName(token);
 
         if(JWTUtils.isTokenInvalidOrExpired(token))
             throw new AuthException(getMessage("validation.token.expired.or.invalid.message"));

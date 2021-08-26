@@ -42,7 +42,7 @@ public class JWTUtils {
 
     public static String trimToken(String bearerToken){
         if(StringUtils.startsWith(bearerToken, prop.getTokenPrefix())){
-            return StringUtils.replace(bearerToken, prop.getTokenPrefix(), "");
+            return StringUtils.replace(bearerToken, prop.getTokenPrefix(), "").trim();
         }
         return bearerToken;
     }
@@ -85,14 +85,10 @@ public class JWTUtils {
     }
 
     private static Claims extractAllClaims(String token) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(prop.getJwtSecret())
-                    .parseClaimsJws(trimToken(token))
-                    .getBody();
-        }catch (MalformedJwtException | ExpiredJwtException e){
-            throw new CredentialsExpiredException(e.getMessage(), e.getCause());
-        }
+        return Jwts.parser()
+                .setSigningKey(prop.getJwtSecret())
+                .parseClaimsJws(trimToken(token))
+                .getBody();
     }
 
     private static boolean isTokenExpired(String token){
