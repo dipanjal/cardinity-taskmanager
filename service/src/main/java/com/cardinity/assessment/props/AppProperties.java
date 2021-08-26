@@ -19,4 +19,5 @@ public class AppProperties {
     private String tokenPrefix;
     private String jwtSecret;
     private String authHeaderName;
+    private String tokenValidationRegex;
 }

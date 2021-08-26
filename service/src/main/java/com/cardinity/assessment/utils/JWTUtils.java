@@ -2,11 +2,10 @@ package com.cardinity.assessment.utils;
 
 import com.cardinity.assessment.helper.ApplicationContextHolder;
 import com.cardinity.assessment.props.AppProperties;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.CredentialsExpiredException;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -41,9 +40,11 @@ public class JWTUtils {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public static String trimToken(String barerToken){
-        String tokenPrefix = String.format("%s ", prop.getTokenPrefix());
-        return StringUtils.replace(barerToken, tokenPrefix, "");
+    public static String trimToken(String bearerToken){
+        if(StringUtils.startsWith(bearerToken, prop.getTokenPrefix())){
+            return StringUtils.replace(bearerToken, prop.getTokenPrefix(), "");
+        }
+        return bearerToken;
     }
 
     public static boolean isTokenValid(String token, String username){
@@ -53,6 +54,15 @@ public class JWTUtils {
 
     public static boolean isTokenInvalidOrExpired(String token, String username){
         return !isTokenValid(token, username);
+    }
+
+    public static boolean isTokenInvalidOrExpired(String token){
+        return !isTokenValid(StringUtils.trimToEmpty(token), extractUserName(token));
+    }
+
+    public static boolean isTokenFormatValid(String bearerToken){
+        return StringUtils.isNotBlank(bearerToken) &&
+                bearerToken.matches(prop.getTokenValidationRegex());
     }
 
     /* PRIVATES */
@@ -74,11 +84,15 @@ public class JWTUtils {
         return claimsResolver.apply(extractAllClaims(token));
     }
 
-    private static Claims extractAllClaims(String token){
-        return Jwts.parser()
-                .setSigningKey(prop.getJwtSecret())
-                .parseClaimsJws(token)
-                .getBody();
+    private static Claims extractAllClaims(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(prop.getJwtSecret())
+                    .parseClaimsJws(trimToken(token))
+                    .getBody();
+        }catch (MalformedJwtException | ExpiredJwtException e){
+            throw new CredentialsExpiredException(e.getMessage(), e.getCause());
+        }
     }
 
     private static boolean isTokenExpired(String token){

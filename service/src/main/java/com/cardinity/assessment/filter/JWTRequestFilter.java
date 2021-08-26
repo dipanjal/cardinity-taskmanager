@@ -1,15 +1,11 @@
 package com.cardinity.assessment.filter;
 
-import com.cardinity.assessment.exception.AuthException;
-import com.cardinity.assessment.helper.ApplicationContextHolder;
 import com.cardinity.assessment.props.AppProperties;
 import com.cardinity.assessment.service.auth.AuthService;
-import com.cardinity.assessment.service.auth.BasicAuthServiceImpl;
+import com.cardinity.assessment.utils.JWTUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +31,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     @Autowired
     @Lazy
     private AuthService authService;
+
     private final AppProperties props;
 
     @Override
@@ -42,18 +39,19 @@ public class JWTRequestFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-/*        String authToken = request.getHeader(props.getAuthHeaderName());
+        String authToken = request.getHeader(props.getAuthHeaderName());
+        if(JWTUtils.isTokenFormatValid(authToken)){
+            UserDetails userDetails = authService.validateToken(authToken);
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
 
-        UserDetails userDetails = authService.validateToken(authToken);
+            usernamePasswordAuthenticationToken
+                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-
-        usernamePasswordAuthenticationToken
-                .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);*/
+            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        }
+        log.info("{} Triggered for URI {}", this.getClass().getName(), request.getRequestURI());
 
         filterChain.doFilter(request, response);
     }

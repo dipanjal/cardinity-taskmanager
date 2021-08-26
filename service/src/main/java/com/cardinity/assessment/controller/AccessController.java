@@ -1,6 +1,7 @@
 package com.cardinity.assessment.controller;
 
 import com.cardinity.assessment.model.request.auth.AuthenticationRequest;
+import com.cardinity.assessment.model.response.auth.TokenResponse;
 import com.cardinity.assessment.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,7 @@ public class AccessController {
     private final AuthService authService;
 
     @PostMapping("/access/token")
-    public ResponseEntity<String> authenticate(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<TokenResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
-    }
-
-    @PostMapping("/test")
-    public ResponseEntity<String> hello(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok("Hello World");
     }
 }

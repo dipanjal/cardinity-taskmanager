@@ -1,10 +1,10 @@
 package com.cardinity.assessment.config;
 
 import com.cardinity.assessment.advice.AuthFailureHandler;
+import com.cardinity.assessment.advice.CardinityAccessDeniedHandler;
 import com.cardinity.assessment.filter.JWTRequestFilter;
+import com.cardinity.assessment.service.auth.CardinityUserDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -28,12 +27,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    @Qualifier("cardinityUserDetailsService")
-    private UserDetailsService userDetailsService;
+    private final CardinityUserDetailsService userDetailsService;
     private final JWTRequestFilter jwtFilter;
     private final AuthFailureHandler authFailureHandler;
+    private final CardinityAccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(final AuthenticationManagerBuilder authBuilder) throws Exception {
@@ -42,21 +39,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-/*        http.csrf().disable()
-                .authorizeRequests()
-                .anyRequest()
-                .permitAll()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
-
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/access/token")
+                .antMatchers(getAllowedUrls())
                 .permitAll()
-                .anyRequest().authenticated();
-//                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and().exceptionHandling().authenticationEntryPoint(authFailureHandler);
+                .anyRequest().authenticated()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().exceptionHandling()
+                .authenticationEntryPoint(authFailureHandler)
+                .accessDeniedHandler(accessDeniedHandler)
+                .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     private String[] getAllowedUrls(){

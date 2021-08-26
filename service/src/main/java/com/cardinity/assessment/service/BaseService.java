@@ -1,8 +1,10 @@
 package com.cardinity.assessment.service;
 
 import com.cardinity.assessment.exception.RecordNotFoundException;
+import com.cardinity.assessment.model.auth.CurrentUser;
 import com.cardinity.assessment.props.AppProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.function.Supplier;
 
@@ -33,5 +35,9 @@ public abstract class BaseService {
 
     private  <E extends RuntimeException> Supplier<E> supplyException(E exception){
         return () -> exception;
+    }
+
+    protected CurrentUser getCurrentUser() {
+        return (CurrentUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

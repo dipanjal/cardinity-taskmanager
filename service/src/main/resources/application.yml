@@ -1,6 +1,7 @@
 server:
   tomcat:
     accept-count: 300
+  port: 8080
 
 spring:
   aop:
@@ -31,3 +32,4 @@ application:
   token-prefix: Bearer
   jwt-secret: dipAnj@L
   auth-header-name: Authorization
+  token-validation-regex: ^Bearer\s[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$
