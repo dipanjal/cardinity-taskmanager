@@ -20,4 +20,5 @@ public class AppProperties {
     private String jwtSecret;
     private String authHeaderName;
     private String tokenValidationRegex;
+    private boolean seederEnabled;
 }

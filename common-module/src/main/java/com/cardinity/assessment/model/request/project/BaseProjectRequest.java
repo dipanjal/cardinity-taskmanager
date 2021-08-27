@@ -19,8 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class BaseProjectRequest implements Serializable {
-    @NotEmpty(message = "Project Name can't be empty", groups = UserAction.CREATE.class)
+    @NotEmpty(message = "validation.constraints.projectName.NotNull.message", groups = UserAction.CREATE.class)
     private String name;
-    private String description;
     private long userId;
 }

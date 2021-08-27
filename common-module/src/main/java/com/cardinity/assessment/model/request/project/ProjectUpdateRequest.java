@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 public class ProjectUpdateRequest extends BaseProjectRequest {
-    @NotNull(message = "Project ID can not be empty")
-    @Range(min = 1, message = "Invalid Project ID")
+    @NotNull(message = "validation.constraints.projectId.NotNull.message")
+    @Range(min = 1, message = "validation.constraints.projectId.Invalid.message")
     private long projectId;
 }

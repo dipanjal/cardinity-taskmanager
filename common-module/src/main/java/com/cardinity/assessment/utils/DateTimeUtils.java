@@ -1,5 +1,7 @@
 package com.cardinity.assessment.utils;
 
+import lombok.experimental.UtilityClass;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -15,11 +17,12 @@ import java.util.Date;
  * @author dipanjal
  * @since version 1
  */
-
+@UtilityClass
 public class DateTimeUtils {
 
-    public static final String DB_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String API_DATE_FORMAT = "dd-MM-yyyy";
+
 
     public static String toDBDateFormat(String apiDateStr){
         return convertDateFormat(apiDateStr, API_DATE_FORMAT, DB_DATE_FORMAT);
@@ -34,16 +37,25 @@ public class DateTimeUtils {
         return sourceDate.format(DateTimeFormatter.ofPattern(targetFormat));
     }
 
+    public static String formatDate(Date date, String format) {
+        DateFormat dateFormatter = new SimpleDateFormat(format);
+        return date == null ? "" : dateFormatter.format(date);
+    }
+
+    public static String toAPIDateFormat(Date dbDate){
+        String dbDateString = formatDate(dbDate, DB_DATE_FORMAT);
+        return toAPIDateFormat(dbDateString);
+    }
+
+
+
 
     public static LocalDate formatDateStrToLocalDate(String dateTimeStr, String dateFormat) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat);
         return LocalDate.parse(dateTimeStr, dateTimeFormatter);
     }
 
-    public static String formatDate(Date date, String format) {
-        DateFormat dateFormatter = new SimpleDateFormat(format);
-        return date == null ? "" : dateFormatter.format(date);
-    }
+
 
     public static String formatLocalDateToDateStr(LocalDate localDate, String dateFormat) {
         if (localDate == null) {

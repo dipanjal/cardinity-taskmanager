@@ -2,6 +2,7 @@ package com.cardinity.assessment;
 
 import com.cardinity.assessment.enums.SystemUserRole;
 import com.cardinity.assessment.model.request.user.CreateUserRequest;
+import com.cardinity.assessment.props.AppProperties;
 import com.cardinity.assessment.service.role.RoleService;
 import com.cardinity.assessment.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ApplicationSeeder implements ApplicationListener<ContextRefreshedEv
 
     private final UserService userService;
     private final RoleService roleService;
+    private final AppProperties props;
 
 
     private void populateRoles() {
@@ -71,7 +73,9 @@ public class ApplicationSeeder implements ApplicationListener<ContextRefreshedEv
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-//        populateRoles();
-//        populateUsers();
+        if(props.isSeederEnabled()){
+            populateRoles();
+            populateUsers();
+        }
     }
 }

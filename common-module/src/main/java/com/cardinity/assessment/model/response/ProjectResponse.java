@@ -19,7 +19,6 @@ import java.io.Serializable;
 public class ProjectResponse implements Serializable {
     private long id;
     private String name;
-    private String status;
     private String createdAt;
     private String updatedAt;
     private long createdBy;

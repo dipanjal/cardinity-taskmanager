@@ -46,4 +46,9 @@ public abstract class BaseCRUDService<ENTITY, REPO extends JpaRepository<ENTITY,
                 }).orElseThrow(() -> new RecordNotFoundException("api.response.NOT_FOUND.message"));
     }
 
+    @Transactional(readOnly = true)
+    public Optional<ENTITY> deleteOpt(long id) {
+        return Optional.ofNullable(this.delete(id));
+    }
+
 }

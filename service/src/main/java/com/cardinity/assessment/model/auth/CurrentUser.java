@@ -1,5 +1,7 @@
 package com.cardinity.assessment.model.auth;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -9,6 +11,8 @@ import java.util.Collection;
  * @author dipanjal
  * @since 0.0.1
  */
+@Getter
+@Setter
 public class CurrentUser extends User {
     private final long id;
 
