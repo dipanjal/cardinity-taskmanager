@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
         return this.buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "DB Exception occurred! Sorry for the inconvenience");
     }
 
-/*    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<?> globalExceptionHandler(Exception ex, WebRequest request) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
                 .body(ResponseBuilder
                         .buildResponse(
                                 HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
-    }*/
+    }
 
     private ResponseEntity<?> buildResponseEntity(HttpStatus status, Exception ex){
         return buildResponseEntity(status, ex.getLocalizedMessage());

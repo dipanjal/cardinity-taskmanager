@@ -20,21 +20,27 @@ import java.util.Date;
 @UtilityClass
 public class DateTimeUtils {
 
-    public static final String DB_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DB_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String API_DATE_FORMAT = "dd-MM-yyyy";
+    public static final String API_DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
 
 
     public static String toDBDateFormat(String apiDateStr){
-        return convertDateFormat(apiDateStr, API_DATE_FORMAT, DB_DATE_FORMAT);
+        return convertDateFormat(apiDateStr, API_DATE_FORMAT, DB_DATE_TIME_FORMAT);
     }
 
     public static String toAPIDateFormat(String dbDateStr){
-        return convertDateFormat(dbDateStr, DB_DATE_FORMAT, API_DATE_FORMAT);
+        return convertDateFormat(dbDateStr, DB_DATE_TIME_FORMAT, API_DATE_FORMAT);
     }
 
     private static String convertDateFormat(String source, String sourceFormat, String targetFormat){
         LocalDate sourceDate = LocalDate.parse(source, DateTimeFormatter.ofPattern(sourceFormat));
         return sourceDate.format(DateTimeFormatter.ofPattern(targetFormat));
+    }
+
+    private static String convertDateTimeFormat(String source, String sourceFormat, String targetFormat){
+        LocalDateTime sourceDatTime = LocalDateTime.parse(source, DateTimeFormatter.ofPattern(sourceFormat));
+        return sourceDatTime.format(DateTimeFormatter.ofPattern(targetFormat));
     }
 
     public static String formatDate(Date date, String format) {
@@ -43,16 +49,29 @@ public class DateTimeUtils {
     }
 
     public static String toAPIDateFormat(Date dbDate){
-        String dbDateString = formatDate(dbDate, DB_DATE_FORMAT);
+        String dbDateString = formatDate(dbDate, DB_DATE_TIME_FORMAT);
         return toAPIDateFormat(dbDateString);
     }
 
-
-
+    public static String toAPIDateTimeFormat(Date dbDate){
+        String dbDateString = formatDate(dbDate, DB_DATE_TIME_FORMAT);
+        return convertDateTimeFormat(dbDateString, DB_DATE_TIME_FORMAT, API_DATE_TIME_FORMAT);
+    }
 
     public static LocalDate formatDateStrToLocalDate(String dateTimeStr, String dateFormat) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat);
         return LocalDate.parse(dateTimeStr, dateTimeFormatter);
+    }
+
+    public static Date addHour(Date date, int hour) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR, hour);
+        return calendar.getTime();
+    }
+
+    public static Date expireAtHour(int hour){
+        return addHour(new Date(), hour);
     }
 
 
@@ -140,15 +159,15 @@ public class DateTimeUtils {
     }
 
     public static boolean isValidDateRangeLimitForCardStatement(String fromDate, String toDate, Long cardStatementDateRange) {
-        LocalDate startDate = formatDateStrToLocalDate(fromDate, DB_DATE_FORMAT);
-        LocalDate endDate = formatDateStrToLocalDate(toDate, DB_DATE_FORMAT);
+        LocalDate startDate = formatDateStrToLocalDate(fromDate, DB_DATE_TIME_FORMAT);
+        LocalDate endDate = formatDateStrToLocalDate(toDate, DB_DATE_TIME_FORMAT);
         long daysBetween = Duration.between(startDate.atStartOfDay(), endDate.atStartOfDay()).toDays();
         return daysBetween < cardStatementDateRange;
     }
 
     public static boolean isStartDateGreaterThanEndDate(String fromDate, String toDate) {
-        LocalDate startDate = formatDateStrToLocalDate(fromDate, DB_DATE_FORMAT);
-        LocalDate endDate = formatDateStrToLocalDate(toDate, DB_DATE_FORMAT);
+        LocalDate startDate = formatDateStrToLocalDate(fromDate, DB_DATE_TIME_FORMAT);
+        LocalDate endDate = formatDateStrToLocalDate(toDate, DB_DATE_TIME_FORMAT);
         return endDate.isBefore(startDate);
     }
 

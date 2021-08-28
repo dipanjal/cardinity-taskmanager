@@ -28,7 +28,6 @@ public class ProjectMapper {
         entity.setName(request.getName());
         entity.setCreatedById(createdBy.getId());
         entity.setUpdatedById(createdBy.getId());
-//        assignedUserOpt.ifPresent(entity::addUser);
         assignedUserOpt.ifPresent(userEntity -> {
             userEntity.addProject(entity);
             entity.addUser(userEntity);

@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 /**
  * @author dipanjal
- * @since 2/6/2021
+ * @since version 0.0.1
  */
 @Entity
 @Table(name = "project")
@@ -36,7 +36,6 @@ public class ProjectEntity extends BaseUpdatableEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
             mappedBy = "projectEntity", orphanRemoval = true)
     private Collection<TaskEntity> tasks = new HashSet<>();
-
     public void addTask(TaskEntity taskEntity){
         tasks.add(taskEntity);
     }

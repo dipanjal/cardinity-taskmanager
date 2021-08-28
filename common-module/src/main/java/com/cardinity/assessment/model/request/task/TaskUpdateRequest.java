@@ -1,10 +1,12 @@
 package com.cardinity.assessment.model.request.task;
 
+import com.cardinity.assessment.validation.UserAction;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -15,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class TaskUpdateRequest extends BaseTaskRequest {
-    @NotNull(message = "Task ID can not be empty")
-    @Range(min = 1, message = "Invalid Task ID")
+    @NotNull(message = "validation.constraints.taskId.NotNull.message", groups = UserAction.UPDATE.class)
+    @Min(value = 1, message = "validation.constraints.taskId.Invalid.message", groups = UserAction.UPDATE.class)
     private long taskId;
 }

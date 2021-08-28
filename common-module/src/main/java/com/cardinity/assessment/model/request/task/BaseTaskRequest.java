@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotEmpty;
@@ -23,16 +24,23 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class BaseTaskRequest implements Serializable {
-    @NotNull(message = "Project ID can not be empty")
-    @Range(min = 1, message = "Invalid Project ID")
+
+    @NotNull(message = "validation.constraints.projectId.NotNull.message", groups = {UserAction.CREATE.class, UserAction.UPDATE.class})
+    @Range(min = 1, message = "validation.constraints.projectId.Invalid.message", groups = {UserAction.CREATE.class, UserAction.UPDATE.class})
     private long projectId;
-    @NotEmpty(message = "Task Name can't be empty", groups = UserAction.CREATE.class)
+
+    @NotEmpty(message = "validation.constraints.taskName.NotNull.message", groups = {UserAction.CREATE.class, UserAction.UPDATE.class})
     private String name;
-    @NotEmpty(message = "Task Description can't be empty")
+
+    @Length(min = 5, max = 300, message = "validation.constraints.task-description-length.Invalid.message",
+            groups = {UserAction.CREATE.class, UserAction.UPDATE.class})
     private String description;
+
     private int expiryHour;
     @Pattern(regexp = CommonRegex.STATUS_VALIDATION_REGEX, flags = Pattern.Flag.CASE_INSENSITIVE,
-            message = "Invalid Task Status, Must be [open, in progress, closed]")
+            message = "validation.constraints.taskStatus.Invalid.message",
+            groups = {UserAction.CREATE.class, UserAction.UPDATE.class})
+
     private String status;
-    private String assignedTo;
+    private long userId;
 }

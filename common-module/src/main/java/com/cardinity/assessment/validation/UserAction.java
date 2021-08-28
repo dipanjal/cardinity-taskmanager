@@ -7,4 +7,5 @@ package com.cardinity.assessment.validation;
 public class UserAction {
     public interface CREATE{}
     public interface UPDATE{}
+    public interface MODIFY extends CREATE, UPDATE{}
 }

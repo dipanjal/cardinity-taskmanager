@@ -56,12 +56,26 @@ public class UserEntity extends BaseEntity {
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "project_id") }
     )
-    Collection<ProjectEntity> projects = new HashSet<>();
+    private Collection<ProjectEntity> projects = new HashSet<>();
     public void addProject(ProjectEntity projectEntity){
         projects.add(projectEntity);
     }
     public void removeProject(ProjectEntity projectEntity){
         projects.remove(projectEntity);
+    }
+
+
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_tasks",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "task_id") }
+    )
+    private Collection<TaskEntity> tasks = new HashSet<>();
+    public void addTask(TaskEntity taskEntity){
+        tasks.add(taskEntity);
+    }
+    public void removeTask(TaskEntity taskEntity){
+        tasks.remove(taskEntity);
     }
 
     public UserEntity(String username, String password, String fullName,

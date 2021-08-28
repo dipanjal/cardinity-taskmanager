@@ -52,7 +52,7 @@ public enum TaskStatus {
         return isValid(t -> t.getCode() == code);
     }
 
-    public static boolean isInvalidValidStatus(int code){
+    public static boolean isInvalidStatus(int code){
         return !isValidStatus(code);
     }
 
@@ -60,7 +60,7 @@ public enum TaskStatus {
         return isValid(t -> t.getValue().equalsIgnoreCase(value));
     }
 
-    public static boolean isInvalidValidStatus(String value){
+    public static boolean isInvalidStatus(String value){
         return !isValidStatus(value);
     }
 
