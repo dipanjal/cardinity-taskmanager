@@ -1,6 +1,7 @@
 package com.cardinity.assessment.service.task;
 
 import com.cardinity.assessment.model.auth.CurrentUser;
+import com.cardinity.assessment.model.request.task.AssignUserTaskRequest;
 import com.cardinity.assessment.model.request.task.TaskCreationRequest;
 import com.cardinity.assessment.model.request.task.TaskUpdateRequest;
 import com.cardinity.assessment.model.response.TaskResponse;
@@ -37,4 +38,6 @@ public interface TaskService {
     TaskResponse updateTask(TaskUpdateRequest request, CurrentUser currentUser);
     @Transactional
     TaskResponse deleteTask(long projectId);
+
+    TaskResponse assignTaskToUser(AssignUserTaskRequest request);
 }

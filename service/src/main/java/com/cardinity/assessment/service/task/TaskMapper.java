@@ -95,14 +95,28 @@ public class TaskMapper {
     public void assignTaskToUser(Optional<UserEntity> assignedUser, final TaskEntity taskEntity) {
 
         Predicate<UserEntity> userExistingTask =  userEntity -> userEntity.getTasks().contains(taskEntity);
+        Predicate<UserEntity> userExistingProject =  userEntity -> userEntity.getProjects().contains(taskEntity.getProjectEntity());
 
         Consumer<UserEntity> setUserTaskAssociation = userEntity -> {
             userEntity.addTask(taskEntity);
             taskEntity.addUser(userEntity);
         };
 
+        Consumer<UserEntity> setUserProjectAssociation = userEntity -> {
+            userEntity.addProject(taskEntity.getProjectEntity());
+            taskEntity.getProjectEntity().addUser(userEntity);
+        };
+
         assignedUser
                 .filter(Predicate.not(userExistingTask))
                 .ifPresent(setUserTaskAssociation);
+
+        assignedUser
+                .filter(Predicate.not(userExistingProject))
+                .ifPresent(setUserProjectAssociation);
+    }
+
+    public void assignTaskToUser(UserEntity assignedUser, final TaskEntity taskEntity) {
+        assignTaskToUser(Optional.ofNullable(assignedUser), taskEntity);
     }
 }

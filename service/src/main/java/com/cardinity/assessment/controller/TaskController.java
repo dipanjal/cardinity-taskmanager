@@ -1,5 +1,6 @@
 package com.cardinity.assessment.controller;
 
+import com.cardinity.assessment.model.request.task.AssignUserTaskRequest;
 import com.cardinity.assessment.model.request.task.TaskCreationRequest;
 import com.cardinity.assessment.model.request.task.TaskUpdateRequest;
 import com.cardinity.assessment.model.response.TaskResponse;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -68,6 +70,13 @@ public class TaskController extends BaseController {
             @Validated(UserAction.UPDATE.class) TaskUpdateRequest request, BindingResult result) {
         super.throwIfHasError(result);
         return ResponseEntity.ok(service.updateTask(request, super.getCurrentUser()));
+    }
+
+    @PostMapping("/assign-user")
+    public ResponseEntity<TaskResponse> assignTaskToUser(@RequestBody
+            @Valid AssignUserTaskRequest request, BindingResult result){
+        super.throwIfHasError(result);
+        return ResponseEntity.ok(service.assignTaskToUser(request));
     }
 
     @DeleteMapping("/delete/{id}")

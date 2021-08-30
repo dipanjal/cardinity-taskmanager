@@ -1,19 +1,17 @@
-# Assessment Project
-A Simple Rest API Project for Assessment Test
+# Task Manager REST API
+A Simple Rest API Project for Task management
+
+## Build
+`mvn clean install`
+
+## Run
+`docker-compose up --build -d`
+
 
 ## [Swagger API Doc][swagger-url]
 API Endpoints are Documented Here
 
-### USER CONTROLLERS
-![image info](./user-controllers.PNG)
-
-### BOOK CONTROLLERS
-![image info](./book-controllers.PNG)
-
-You can use the Swagger API Doc for Testing Rest APIs
-
 ## Contact
-
 [![Gmail][gmail-shield]][email-address]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 

@@ -7,6 +7,7 @@ import com.cardinity.assessment.enums.TaskStatus;
 import com.cardinity.assessment.exception.BadRequestException;
 import com.cardinity.assessment.exception.RecordNotFoundException;
 import com.cardinity.assessment.model.auth.CurrentUser;
+import com.cardinity.assessment.model.request.task.AssignUserTaskRequest;
 import com.cardinity.assessment.model.request.task.TaskCreationRequest;
 import com.cardinity.assessment.model.request.task.TaskUpdateRequest;
 import com.cardinity.assessment.model.response.TaskResponse;
@@ -163,5 +164,17 @@ public class TaskServiceImpl extends BaseService implements TaskService {
         return taskEntityService.deleteOpt(projectId)
                 .map(mapper::mapToDTO)
                 .orElseThrow(supplyRecordNotFoundException("validation.constraints.task.NotFound.message"));
+    }
+
+    @Override
+    public TaskResponse assignTaskToUser(AssignUserTaskRequest request) {
+        TaskEntity taskEntity = taskEntityService.findById(request.getTaskId())
+                .orElseThrow(supplyRecordNotFoundException("validation.constraints.task.NotFound.message"));
+
+        UserEntity userEntity = userEntityService.findById(request.getUserId())
+                .orElseThrow(supplyRecordNotFoundException("validation.constraints.userId.NotFound.message"));
+
+        mapper.assignTaskToUser(userEntity, taskEntity);
+        return mapper.mapToDTO(taskEntityService.save(taskEntity));
     }
 }
