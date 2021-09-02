@@ -6,6 +6,7 @@ import com.cardinity.assessment.model.request.task.TaskUpdateRequest;
 import com.cardinity.assessment.model.response.TaskResponse;
 import com.cardinity.assessment.service.task.TaskService;
 import com.cardinity.assessment.validation.UserAction;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,65 +22,55 @@ import java.util.List;
  * @since 0.0.1
  */
 @RestController
-@RequestMapping("/task")
 @RequiredArgsConstructor
 public class TaskController extends BaseController {
 
     private final TaskService service;
 
-    @GetMapping("/get")
+    @GetMapping("/tasks")
+    @Operation(tags = ApiTags.TASK, description = "Fetch your tasks")
     public ResponseEntity<List<TaskResponse>> getCurrentUserTasks(){
         return ResponseEntity.ok(service.findCurrentUserTasks(super.getCurrentUser()));
     }
 
-    @GetMapping("/get/expired")
+    @GetMapping("/tasks/expired")
+    @Operation(tags = ApiTags.TASK, description = "Fetch your expired tasks")
     public ResponseEntity<List<TaskResponse>> getCurrentUserExpiredTasks(){
         return ResponseEntity.ok(service.findCurrentUserExpiredTasks(super.getCurrentUser()));
     }
 
-    @GetMapping("/get-by-status/{status}")
+    @GetMapping("/task/status/{status}")
+    @Operation(tags = ApiTags.TASK, description = "Fetch your tasks by status")
     public ResponseEntity<List<TaskResponse>> getCurrentUserTasksByStatus(@PathVariable String status){
         return ResponseEntity.ok(service.findCurrentUserTasksByStatus(super.getCurrentUser(), status));
     }
 
-    @GetMapping("/get-by-project/{id}")
-    public ResponseEntity<List<TaskResponse>> getCurrentUserTasksByProjectId(@PathVariable long id){
-        return ResponseEntity.ok(service.findCurrentUserTasksByProjectId(super.getCurrentUser(), id));
-    }
-
-    @GetMapping("/get-all")
-    public ResponseEntity<List<TaskResponse>> getAllTasks(){
-        return ResponseEntity.ok(service.findAllTasks());
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/get-by-user-id/{id}")
-    public ResponseEntity<List<TaskResponse>> getTaskByUserId(@PathVariable long id){
-        return ResponseEntity.ok(service.findTasksByUserId(id));
-    }
-
-    @PostMapping("/create")
+    @PostMapping("/tasks")
+    @Operation(tags = ApiTags.TASK, description = "Create new task")
     public ResponseEntity<TaskResponse> createNewTask(@RequestBody
             @Validated(UserAction.CREATE.class) TaskCreationRequest request, BindingResult result) {
         super.throwIfHasError(result);
         return ResponseEntity.ok(service.createTask(request, super.getCurrentUser()));
     }
 
-    @PostMapping("/update")
+    @PutMapping("/tasks")
+    @Operation(tags = ApiTags.TASK, description = "Update existing task")
     public ResponseEntity<TaskResponse> updateExistingTask(@RequestBody
             @Validated(UserAction.UPDATE.class) TaskUpdateRequest request, BindingResult result) {
         super.throwIfHasError(result);
         return ResponseEntity.ok(service.updateTask(request, super.getCurrentUser()));
     }
 
-    @PostMapping("/assign-user")
+    @PutMapping("/tasks/assign/user")
+    @Operation(tags = ApiTags.TASK, description = "Assign use into a task")
     public ResponseEntity<TaskResponse> assignTaskToUser(@RequestBody
             @Valid AssignUserTaskRequest request, BindingResult result){
         super.throwIfHasError(result);
-        return ResponseEntity.ok(service.assignTaskToUser(request));
+        return ResponseEntity.ok(service.assignTaskToUser(request, getCurrentUser()));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/tasks/{id}")
+    @Operation(tags = ApiTags.TASK, description = "Delete existing task")
     public ResponseEntity<TaskResponse> deleteExistingTask(@PathVariable long id) {
         return ResponseEntity.ok(service.deleteTask(id));
     }

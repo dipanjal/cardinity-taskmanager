@@ -25,7 +25,6 @@ spring:
         format_sql: true
         enable_lazy_load_no_trans: true
 
-
 application:
   request-id-header: request-id
   token-expiry-minute: 30
@@ -33,4 +32,5 @@ application:
   jwt-secret: dipAnj@L
   auth-header-name: Authorization
   token-validation-regex: ^Bearer\s[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$
-  seeder-enabled: false
+  seeder-enabled: true
+  api-version: 0.0.1

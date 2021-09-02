@@ -1,15 +1,15 @@
 package com.cardinity.assessment.controller;
 
-import com.cardinity.assessment.model.request.user.CreateUserRequest;
-import com.cardinity.assessment.model.request.user.UpdateUserRequest;
-import com.cardinity.assessment.model.response.user.UserResponse;
-import com.cardinity.assessment.service.user.UserService;
+import com.cardinity.assessment.model.response.ProjectResponse;
+import com.cardinity.assessment.model.response.TaskResponse;
+import com.cardinity.assessment.service.project.ProjectService;
+import com.cardinity.assessment.service.task.TaskService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -20,42 +20,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController extends BaseController {
 
-    private final UserService userService;
+    private final ProjectService projectService;
+    private final TaskService taskService;
 
-    @GetMapping("/user/get-all")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(
-                userService.findAllUsers()
-        );
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users/{id}/tasks")
+    @Operation(tags = ApiTags.USER, description = "Fetch tasks of a user, Admin access only")
+    public ResponseEntity<List<TaskResponse>> getTaskByUserId(@PathVariable long id){
+        return ResponseEntity.ok(taskService.findTasksByUserId(id));
     }
 
-    @GetMapping("/user/get-by-id/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable long id) {
-        return ResponseEntity.ok(
-                userService.findUserById(id)
-        );
-    }
-
-    @PostMapping("/user/create")
-    public ResponseEntity<UserResponse> createNewUser(@RequestBody @Valid CreateUserRequest dto, BindingResult result) {
-        super.throwIfHasError(result);
-
-        return ResponseEntity.ok(
-                userService.createUser(dto)
-        );
-    }
-
-    @PostMapping("/user/update")
-    public ResponseEntity<UserResponse> updateUser(@RequestBody @Valid UpdateUserRequest dto, BindingResult result) {
-        super.throwIfHasError(result);
-
-        return ResponseEntity.ok(
-                userService.updateUser(dto)
-        );
-    }
-
-    @DeleteMapping("/user/delete-by-id/{id}")
-    public ResponseEntity<UserResponse> deleteUserById(@PathVariable long id) {
-        return ResponseEntity.ok(userService.deleteUser(id));
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users/{id}/projects")
+    @Operation(tags = ApiTags.USER, description = "Fetch projects of a user, Admin access only")
+    public ResponseEntity<List<ProjectResponse>> getProjectById(@PathVariable long id){
+        return ResponseEntity.ok(projectService.findProjectByUser(id));
     }
 }

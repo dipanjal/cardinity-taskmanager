@@ -1,5 +1,6 @@
 package com.cardinity.assessment.service.task;
 
+import com.cardinity.assessment.annotation.EnableLogging;
 import com.cardinity.assessment.entity.ProjectEntity;
 import com.cardinity.assessment.entity.TaskEntity;
 import com.cardinity.assessment.entity.UserEntity;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@EnableLogging
 public class TaskServiceImpl extends BaseService implements TaskService {
     private final TaskEntityService taskEntityService;
     private final UserEntityService userEntityService;
@@ -93,19 +95,14 @@ public class TaskServiceImpl extends BaseService implements TaskService {
     @Override
     public List<TaskResponse> findCurrentUserTasksByProjectId(@NonNull CurrentUser currentUser,
                                                               long projectId) {
-        Collection<ProjectEntity> projectEntities = userEntityService.findById(super.getCurrentUser().getId())
-                .map(UserEntity::getProjects)
-                .orElseThrow(supplyRecordNotFoundException("validation.constraints.userId.NotFound.message"));
-
-        List<TaskResponse> taskResponses = projectEntities.stream()
-                .filter(projectEntity -> projectEntity.getId() == projectId)
-                .map(ProjectEntity::getTasks)
+        List<TaskResponse> taskResponses = taskEntityService
+                .findTaskByUserIdAndProjectId(currentUser.getId(), projectId)
+                .stream()
                 .map(mapper::mapToDTO)
-                .findAny()
-                .orElseThrow(supplyRecordNotFoundException("validation.constraints.task.NotFound.message"));
+                .collect(Collectors.toList());
 
         if(CollectionUtils.isEmpty(taskResponses))
-            throw new RecordNotFoundException("validation.constraints.task.NotFound.message");
+            throw new RecordNotFoundException(getMessage("validation.constraints.task.NotFound.message"));
         return taskResponses;
     }
 
@@ -113,19 +110,17 @@ public class TaskServiceImpl extends BaseService implements TaskService {
     public List<TaskResponse> findCurrentUserTasksByStatus(@NonNull CurrentUser currentUser,
                                                            String status) {
         if(TaskStatus.isInvalidStatus(status))
-            throw new BadRequestException("validation.constraints.taskStatus.Invalid.message");
+            throw new BadRequestException(getMessage("validation.constraints.taskStatus.Invalid.message"));
 
-        Collection<TaskEntity> taskEntities = userEntityService.findById(super.getCurrentUser().getId())
-                .map(UserEntity::getTasks)
-                .orElseThrow(supplyRecordNotFoundException("validation.constraints.userId.NotFound.message"));
-
-        List<TaskResponse> taskResponses = taskEntities.stream()
+        List<TaskResponse> taskResponses = taskEntityService
+                .findTaskByUserIdAndTaskStatus(currentUser.getId(), TaskStatus.getCodeByValue(status))
+                .stream()
                 .filter(t -> t.getStatus() == TaskStatus.getCodeByValue(status))
                 .map(mapper::mapToDTO)
                 .collect(Collectors.toList());
 
         if(CollectionUtils.isEmpty(taskResponses))
-            throw new RecordNotFoundException("validation.constraints.task.NotFound.message");
+            throw new RecordNotFoundException(getMessage("validation.constraints.task.NotFound.message"));
         return taskResponses;
     }
 
@@ -144,18 +139,21 @@ public class TaskServiceImpl extends BaseService implements TaskService {
 
     @Override
     public TaskResponse updateTask(TaskUpdateRequest request, CurrentUser currentUser) {
+
         ProjectEntity projectEntity = projectEntityService.findById(request.getProjectId())
                 .orElseThrow(supplyRecordNotFoundException("validation.constraints.project.NotFound.message"));
-        TaskEntity taskEntityToUpdate = projectEntity.getTasks()
-                .stream()
-                .filter(t -> t.getId() == request.getTaskId())
-                .findFirst()
+
+        TaskEntity taskEntityToUpdate = taskEntityService
+                .findTaskByUserIdAndTaskId(request.getUserId(), request.getTaskId())
                 .orElseThrow(supplyRecordNotFoundException("validation.constraints.task.NotFound.message"));
+
         if(TaskStatus.isClosed(taskEntityToUpdate.getStatus()))
             throw new BadRequestException(getMessage("validation.constraints.taskClosed.ImmutableError.message"));
+
         mapper.mapToEntity(
                 request, taskEntityToUpdate, projectEntity, currentUser,
                 userEntityService.findById(request.getUserId()));
+
         return mapper.mapToDTO(taskEntityToUpdate);
     }
 
@@ -167,14 +165,19 @@ public class TaskServiceImpl extends BaseService implements TaskService {
     }
 
     @Override
-    public TaskResponse assignTaskToUser(AssignUserTaskRequest request) {
+    public TaskResponse assignTaskToUser(AssignUserTaskRequest request, CurrentUser currentUser) {
         TaskEntity taskEntity = taskEntityService.findById(request.getTaskId())
                 .orElseThrow(supplyRecordNotFoundException("validation.constraints.task.NotFound.message"));
+
+        if(TaskStatus.isClosed(taskEntity.getStatus()))
+            throw new BadRequestException(getMessage("validation.constraints.taskClosed.ImmutableError.message"));
 
         UserEntity userEntity = userEntityService.findById(request.getUserId())
                 .orElseThrow(supplyRecordNotFoundException("validation.constraints.userId.NotFound.message"));
 
         mapper.assignTaskToUser(userEntity, taskEntity);
+        taskEntity.setUpdatedById(currentUser.getId());
+
         return mapper.mapToDTO(taskEntityService.save(taskEntity));
     }
 }

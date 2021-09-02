@@ -1,13 +1,17 @@
 package com.cardinity.assessment.service;
 
 import com.cardinity.assessment.entity.TaskEntity;
+import com.cardinity.assessment.enums.TaskStatus;
 import com.cardinity.assessment.repository.TaskRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+
+import static com.cardinity.assessment.specs.TaskEntitySpecifications.*;
 
 /**
  * @author dipanjal
@@ -47,5 +51,31 @@ public class TaskEntityService extends BaseCRUDService<TaskEntity, TaskRepositor
 
     public List<TaskEntity> findAllExpiredTasks() {
         return repository.findAllByCreatedAtBefore(new Date());
+    }
+
+    public Optional<TaskEntity> findTaskByUserIdAndTaskId(long userId, long taskId) {
+        Specification<TaskEntity> spec = Specification
+                .where(byUserId(userId))
+                .and(byTaskId(taskId));
+
+        return repository.findAll(spec)
+                .stream()
+                .findFirst();
+    }
+
+    public List<TaskEntity> findTaskByUserIdAndProjectId(long userId, long taskId) {
+        Specification<TaskEntity> spec = Specification
+                .where(byUserId(userId))
+                .and(byProjectId(taskId));
+
+        return repository.findAll(spec);
+    }
+
+    public List<TaskEntity> findTaskByUserIdAndTaskStatus(long userId, int statusCode) {
+        Specification<TaskEntity> spec = Specification
+                .where(byUserId(userId))
+                .and(byTaskStatus(statusCode));
+
+        return repository.findAll(spec);
     }
 }

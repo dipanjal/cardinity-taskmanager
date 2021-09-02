@@ -33,11 +33,11 @@ public interface TaskService {
     List<TaskResponse> findCurrentUserTasksByStatus(@NonNull CurrentUser currentUser, String status);
 
     @Transactional
-    TaskResponse createTask(TaskCreationRequest request, CurrentUser currentUser);
+    TaskResponse createTask(TaskCreationRequest request, @NonNull CurrentUser currentUser);
     @Transactional
-    TaskResponse updateTask(TaskUpdateRequest request, CurrentUser currentUser);
+    TaskResponse updateTask(TaskUpdateRequest request, @NonNull CurrentUser currentUser);
     @Transactional
     TaskResponse deleteTask(long projectId);
 
-    TaskResponse assignTaskToUser(AssignUserTaskRequest request);
+    TaskResponse assignTaskToUser(AssignUserTaskRequest request, @NonNull CurrentUser currentUser);
 }

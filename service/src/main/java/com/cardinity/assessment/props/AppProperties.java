@@ -21,4 +21,5 @@ public class AppProperties {
     private String authHeaderName;
     private String tokenValidationRegex;
     private boolean seederEnabled;
+    private String apiVersion;
 }

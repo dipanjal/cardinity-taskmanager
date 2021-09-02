@@ -1,9 +1,8 @@
 package com.cardinity.assessment.entity;
 
 import com.cardinity.assessment.entity.base.BaseEntity;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -15,9 +14,8 @@ import java.util.HashSet;
  */
 @Entity
 @Table(name = "user")
-@Getter
-@Setter
 @NoArgsConstructor
+@Data
 public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
